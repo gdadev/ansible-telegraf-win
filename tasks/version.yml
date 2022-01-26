@@ -1,0 +1,15 @@
+---
+- name: '(version) Search'
+  uri:
+    url: https://release-monitoring.org/api/project/58058
+    method: GET
+    return_content: true
+    status_code: 200
+    body_format: json
+  register: register_telegraf_version
+  delegate_to: localhost
+
+- name: '(version) Set version'
+  set_fact:
+    telegraf_version: '{{ register_telegraf_version.json.version }}'
+  delegate_to: localhost

@@ -1,0 +1,11 @@
+---
+- name: '(stop service) Check if a service is installed'
+  win_service:
+    name: '{{ telegraf_service_name }}'
+  register: register_service_info
+
+- name: '(stop service) Stop telegraf service'
+  win_service:
+    name: '{{ telegraf_service_name }}'
+    state: stopped
+  when: register_service_info.exists | bool

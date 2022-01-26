@@ -1,0 +1,8 @@
+---
+# handlers file for telegraf
+- name: restart service
+  win_service:
+    name: '{{ telegraf_service_name }}'
+    state: restarted
+  when: telegraf_install_service | bool
+

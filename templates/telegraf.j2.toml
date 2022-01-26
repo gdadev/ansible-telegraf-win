@@ -1,0 +1,24 @@
+[global_tags]
+{% if telegraf_global_tags is defined and telegraf_global_tags is iterable %}
+{% for item in telegraf_global_tags %}
+    {{ item.tag_name }} = "{{ item.tag_value }}"
+{% endfor %}
+{% endif %}
+
+[agent]
+    interval = "{{ telegraf_agent_interval }}s"
+    debug = {{ telegraf_agent_debug | lower }}
+    hostname = "{{ telegraf_agent_hostname }}"
+    round_interval = {{ telegraf_agent_round_interval | lower }}
+    flush_interval = "{{ telegraf_agent_flush_interval }}s"
+    flush_jitter = "{{ telegraf_agent_flush_jitter }}s"
+{% if telegraf_version is version_compare('0.13', '>=') %}
+    collection_jitter = "{{ telegraf_agent_collection_jitter }}s"
+    metric_batch_size = {{ telegraf_agent_metric_batch_size }}
+    metric_buffer_limit = {{ telegraf_agent_metric_buffer_limit }}
+    quiet = {{ telegraf_agent_quiet | lower }}
+{% endif %}
+{% if telegraf_version is version_compare('1.1', '>=') %}
+    logfile = "{{ telegraf_logfile }}"
+    omit_hostname = {{ telegraf_agent_omit_hostname | lower }}
+{% endif %}

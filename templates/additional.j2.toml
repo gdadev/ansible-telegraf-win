@@ -1,0 +1,6 @@
+[[outputs.prometheus_client]]
+    listen = "{{ telegraf_prometheus_listen_address }}"
+    path = "{{ telegraf_prometheus_metrics_path }}"
+
+[[inputs.internal]]
+    collect_memstats = {{ telegraf_internal_collect_memstats | lower }}

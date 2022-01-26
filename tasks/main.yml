@@ -1,0 +1,38 @@
+---
+- block:
+  - name: '(main) Include version search'
+    include_tasks: version.yml
+    when: telegraf_version is undefined
+
+  - name: '(main) Include install tasks'
+    include_tasks: install.yml
+
+  - name: '(main) Configure telegraf - main config'
+    win_template:
+      src: 'templates/telegraf.j2.toml'
+      dest: '{{ telegraf_config_path }}'
+    notify: restart service
+
+  - name: '(main) Configure telegraf - additional config'
+    win_template:
+      src: '{{ telegraf_additional_config_template }}'
+      dest: '{{ telegraf_additional_config_path }}'
+    notify: restart service
+    
+  - name: '(main) INSTALL service'
+    block:
+    - name: '(main) Install telegraf service'
+      win_service:
+        name: '{{ telegraf_service_name }}'
+        description: '{{ telegraf_service_description }}'
+        path: '"{{ telegraf_executable }}" --config "{{ telegraf_config_path }}" --config-directory "{{ telegraf_include_directory }}"'
+        start_mode: delayed
+
+    - name: '(main) Ensure service started'
+      win_service:
+        name: '{{ telegraf_service_name }}'
+        state: started
+
+    when: telegraf_install_service | bool
+
+  when: ansible_os_family == 'Windows'

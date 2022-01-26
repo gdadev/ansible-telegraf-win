@@ -1,0 +1,13 @@
+galaxy_info:
+  role_name: telegraf
+  author: gdadev <danny.prim@gmail.com>
+  description: Ansible roles that installs telegraf on a Windows system.
+  license: MIT
+  min_ansible_version: 2.7
+  platforms:
+    - name: Windows
+      versions:
+        - all
+  galaxy_tags: []
+dependencies: []
+

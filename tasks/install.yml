@@ -1,0 +1,53 @@
+---
+- name: '(install) telegraf exists'
+  block:
+  - name: '(install) Check telegraf executable exists'
+    win_stat:
+      path: "{{ telegraf_executable }}"
+    register: telegraf_exists
+
+  - name: '(install) set fact -> telegraf_exists'
+    set_fact:
+      telegraf_exists: "{{ telegraf_exists.stat.exists }}"
+
+  - name: '(install) get existing version'
+    win_shell: |
+      $var = & "{{ telegraf_executable }}" --version 2>&1 | select-string "Telegraf" | `
+      select-object -first 1; $var -match "Telegraf (\d{1,2}.\d{1,2}.\d{1,2}) " | Out-Null; $Matches[1]
+    register: existing_version_shell
+    failed_when: no
+    check_mode: no
+    changed_when: no
+
+  - name: '(install) set fact -> telegraf_existing_version'
+    set_fact:
+      telegraf_existing_version: "{{ existing_version_shell.stdout | trim if existing_version_shell.rc == 0 else '0' }}"
+
+- name: '(install) INSTALL telegraf'
+  block:
+    - name: '(install) Ensure install directory exists'
+      win_file:
+        path: "{{ telegraf_install_directory }}"
+        state: directory
+
+    - name: '(install) Ensure include directory exists'
+      win_file:
+        path: "{{ telegraf_include_directory }}"
+        state: directory
+
+    - name: '(install) Download telegraf'
+      include_tasks: download.yml
+      
+  when: (not telegraf_exists)
+
+- name: '(install) UPGRADE telegraf'
+  block:
+    - name: '(install) Make sure exporter is stopped'
+      include_tasks: stop_service.yml
+
+    - name: '(install) Download telegraf'
+      include_tasks: download.yml
+  
+  when:
+    - telegraf_exists
+    - telegraf_existing_version != telegraf_version

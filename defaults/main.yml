@@ -1,0 +1,44 @@
+---
+# telegraf_version: 0.17.0
+
+telegraf_architecture: amd64
+
+telegraf_install_directory: 'c:/Program Files/telegraf'
+telegraf_include_directory: '{{ telegraf_install_directory }}/telegraf.d'
+telegraf_download_temp_directory: '{{ telegraf_install_directory }}/download_temp'
+telegraf_executable: '{{ telegraf_install_directory }}/telegraf.exe'
+
+telegraf_service_name: 'telegraf'
+telegraf_service_description: 'The plugin-driven server agent for collecting & reporting metrics. s'
+telegraf_install_service: true
+
+telegraf_additional_config_template: templates/additional.j2.toml
+telegraf_config_path: '{{ telegraf_install_directory }}/telegraf.conf'
+telegraf_additional_config_path: '{{ telegraf_include_directory }}/additional.conf'
+
+
+# https://github.com/influxdata/telegraf/blob/master/docs/CONFIGURATION.md#agent-configuration
+telegraf_agent_hostname: '{{ ansible_fqdn }}'
+telegraf_agent_interval: 10
+telegraf_agent_debug: false
+telegraf_agent_round_interval: true
+telegraf_agent_flush_interval: 10
+telegraf_agent_flush_jitter: 0
+telegraf_agent_collection_jitter: 0
+telegraf_agent_metric_batch_size: 1000
+telegraf_agent_metric_buffer_limit: 10000
+telegraf_agent_quiet: false
+telegraf_logfile: '{{ telegraf_install_directory }}/telegraf.log'
+telegraf_agent_omit_hostname: false
+
+# Setting tags
+# You can set tags for the host running telegraf:
+# telegraf_global_tags:
+#  - tag_name: some_name
+#    tag_value: some_value
+telegraf_global_tags: []
+
+
+telegraf_prometheus_listen_address: ':9273'
+telegraf_prometheus_metrics_path: '/metrics'
+telegraf_internal_collect_memstats: false
